@@ -1,0 +1,6 @@
+AritmExp = { "-" } ( "(" AritmExp ")" | "variable" [ "[" "intConst" "]" ] | "intConst" | "realConst" |
+"stringConst" | "charConst" | "true" | "false" ) { ( "" | "/" ) { "-" } ( "(" AritmExp ")" | "variable" [ "["
+"intConst" "]" ] | "intConst" | "realConst" | "stringConst" | "charConst" | "true" | "false" ) } { ( "-" |
+"+" ) { "-" } ( "(" AritmExp ")" | "variable" [ "[" "intConst" "]" ] | "intConst" | "realConst" |
+"stringConst" | "charConst" | "true" | "false" ) { ( "" | "/" ) { "-" } ( "(" AritmExp ")" | "variable" [ "["
+"intConst" "]" ] | "intConst" | "realConst" | "stringConst" | "charConst" | "true" | "false" ) } }

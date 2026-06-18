@@ -1,0 +1,3 @@
+Command = "{" Command { ";" Command } "}" | "variable" [ "[" "intConst" "]" ] ":" ( LogicalExp |
+AritmExp ) | "print" AritmExp | "if" "(" LogicalExp ")" Command [ "else" Command ] "endIf" |
+"while" "(" LogicalExp ")" Command "endWhile" | "return" [AritmExp] | "break"

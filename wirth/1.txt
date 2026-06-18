@@ -1,1 +1,1 @@
-S = "a" "b" ( "c" | A ( "a" | "b" ) ) | [ "a" | "b" ] { "b" "c" | A | B }
+LogicalExp = ( AritmExp | "(" LogicalExp ")") { ( "<=" | "<" | ">" | ">=" | "==" | "#" ) AritmExp }

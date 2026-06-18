@@ -1,0 +1,15 @@
+FileProgram = "program" "programName" "declarations" "varType" ( "real" | "integer" | "string"
+| "boolean" | "character" | "void" ) ( ":" "variable" { "," "variable" } | "[" "]" ":" "variable" "["
+intConst "]" { "," "variable" "[" intConst "]" } ) { ";" "varType" ( "real" | "integer" | "string" |
+"boolean" | "character" | "void" ) (":" "variable" { "," "variable" } | "[" "]" ":" "variable" "[" intConst
+"]" { "," "variable" "[" intConst "]" } ) } "endDeclararions" [ "functions" "funcType" ( "real" |
+"integer" | "string" | "boolean" | "character" | "void" ) ":" "functionName" "(" ( "paramType"
+( "real" | "integer" | "string" | "boolean" | "character" | "void" ) ":" "variable" [ "[" "intConst" "]" ] {
+"," "variable" [ "[" "intConst" "]" ] } { ";" "paramType" ( "real" | "integer" | "string" | "boolean" |
+"character" | "void" ) ":" "variable" [ "[" "intConst" "]" ] { "," "variable" [ "[" "intConst" "]" ] } } | "?" )
+")" Command "endFunction" { ";" "funcType" ( "real" | "integer" | "string" | "boolean" |
+"character" | "void" ) ":" "functionName" "(" ( "paramType" ( "real" | "integer" | "string" |
+"boolean" | "character" | "void" ) ":" "variable" [ "[" "intConst" "]" ] { "," "variable" [ "[" "intConst"
+"]" ] } { ";" "paramType" ( "real" | "integer" | "string" | "boolean" | "character" | "void" ) ":"
+"variable" [ "[" "intConst" "]" ] { "," "variable" [ "[" "intConst" "]" ] } } | "?" ) ")" Command
+"endFunction" } "end Functions" ] "endProgram"

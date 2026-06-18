@@ -1,8 +1,8 @@
 import os
-import numpy as np
-import csv
+import copy
 
 from models.AutomatoBruto import AutomatoBrutoClass as AB
+from models.AutomatoOtimo import AutomatoOtimoClass as AO
 
 def ler_arquivos_wirth(pasta_destino: str) -> list:
     """Lê todos os arquivos .txt do diretório especificado e retorna uma lista de tuplas (nome_arquivo, conteudo)"""
@@ -24,9 +24,8 @@ def ler_arquivos_wirth(pasta_destino: str) -> list:
                     
     return wirths
 
-def printAutomatoBruto(conteudo: str):
+def controleAutomatoBruto(t: AB, destino: str):
 
-    t = AB(conteudo)
     print("--- Posições ---")
     print(t.atribuirPosicao())
     print("\n--- Regras de Estado ---")
@@ -39,18 +38,46 @@ def printAutomatoBruto(conteudo: str):
     print(f"Inicial: {estado_inicial}")
     print(f"Finais: {estados_finais}\n")
 
-    print("--- Tabela de Transições ---")
-    tabela_visual, tabela_numpy = t.montarTabelaTransicoes()
-    print(tabela_visual)
+    # 1. Gera os dados em memória (Dicionário)
+    t.gerarDicionarioBruto()
 
-    nome_exportacao = f"output/tabela_{nome.replace('.txt', '')}.csv"
-    with open(nome_exportacao, mode='w', newline='', encoding='utf-8') as arquivo_csv:
-            escritor_csv = csv.writer(arquivo_csv, delimiter=';') # Usando ponto-e-vírgula para evitar conflito com as vírgulas das listas
-            
-            # O tabela_numpy já tem o cabeçalho na primeira linha e os dados nas demais
-            for linha in tabela_numpy:
-                escritor_csv.writerow(linha)
-    print(f"\n[!] Tabela exportada com sucesso para '{nome_exportacao}'\n")
+    # 2. Formata para visualização
+    print("--- Tabela de Transições (Bruta) ---")
+    tabela_visual, tabela_numpy = t.formatarTabela()
+
+    t.exportarCSV(os.path.join(destino, "1_bruto.csv"), tabela_numpy)
+
+def controleAutomatoOtimo(bruto: AB, pasta_saida: str):
+    print("\n" + "="*50)
+    print("INICIANDO FASE DE OTIMIZAÇÃO")
+    print("="*50)
+
+    # Cria o autômato ótimo puxando a herança e os dados do bruto
+    otimo = AO.fromBruto(bruto)
+
+    print("\n--- Tabela Sem Transições em Vazio ---")
+    otimo.eliminar_transicoes_vazio()
+    visual_vazio, numpy_vazio = otimo.formatarTabela()
+    #print(visual_vazio)
+    otimo.exportarCSV(os.path.join(pasta_saida, "2_sem_vazio.csv"), numpy_vazio)
+
+    print("\n--- Tabela Determinística ---")
+    otimo.eliminar_transicoes_nao_deterministicas()
+    visual_det, numpy_det = otimo.formatarTabela()
+    #print(visual_det)
+    otimo.exportarCSV(os.path.join(pasta_saida, "3_determinado.csv"), numpy_det)
+
+    print("\n--- Tabela Sem Estados Não Acessíveis ---")
+    otimo.eliminar_estados_nao_acessiveis()
+    visual_acess, numpy_acess = otimo.formatarTabela()
+    #print(visual_acess)
+    otimo.exportarCSV(os.path.join(pasta_saida, "4_acessiveis.csv"), numpy_acess)
+
+    print("\n--- Autômato Mínimo (Final) ---")
+    otimo.eliminar_estados_equivalentes()
+    visual_minimo, numpy_minimo = otimo.formatarTabela()
+    #print(visual_minimo)
+    otimo.exportarCSV(os.path.join(pasta_saida, "5_minimo.csv"), numpy_minimo)
 
 
 if __name__ == "__main__":
@@ -60,7 +87,16 @@ if __name__ == "__main__":
     
     if not wirths:
         print("Nenhum arquivo válido encontrado para processamento.")
-    
-    for nome, conteudo_wirth in wirths:
-        printAutomatoBruto(conteudo_wirth)
-        
+    else:
+        for nome, conteudo_wirth in wirths:
+
+            nome_base = nome.replace('.txt', '')
+            pasta_saida = os.path.join("output", nome_base)
+            os.makedirs(pasta_saida, exist_ok=True)
+
+            # Fluxo Bruto
+            t = AB(conteudo_wirth)
+            controleAutomatoBruto(t, pasta_saida)
+            
+            # Fluxo Ótimo
+            controleAutomatoOtimo(t, pasta_saida)
